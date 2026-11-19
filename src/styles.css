@@ -35,4 +35,6 @@ body {
   background-color: var(--color-pf-bg);
   color: var(--color-pf-text);
   font-family: "Poppins", "Inter", system-ui, sans-serif;
+  @keyframes pf-float { 50% { transform: translateY(-8px); } }
+  .pf-float { animation: pf-float 4s ease-in-out infinite; }
 }/* You can add global styles to this file, and also import other style files */

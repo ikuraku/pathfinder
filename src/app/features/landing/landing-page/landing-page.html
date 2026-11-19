@@ -1,0 +1,304 @@
+<div class="min-h-screen bg-white text-pf-text">
+
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-40 border-b bg-white/85 backdrop-blur transition-shadow"
+          [class]="scrolled() ? 'border-slate-200 shadow-sm' : 'border-transparent'">
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-2">
+      <button type="button" (click)="scrollTo('home')" aria-label="PathFinder home">
+        <img src="logo.png" alt="PathFinder - Discover your future" class="h-12 w-auto" />
+      </button>
+
+      <nav class="hidden items-center gap-1 md:flex">
+        @for (link of links; track link.id) {
+          <button type="button" (click)="scrollTo(link.id)"
+                  class="rounded-full px-4 py-2 text-sm font-semibold transition hover:bg-pf-blue-light hover:text-pf-blue">
+            {{ link.label }}
+          </button>
+        }
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <a routerLink="/dashboard"
+           class="hidden rounded-full bg-pf-blue px-5 py-2 text-sm font-semibold text-white shadow hover:bg-pf-blue-dark sm:inline-block">
+          Open PathFinder →
+        </a>
+        <button type="button" (click)="menuOpen.set(!menuOpen())" aria-label="Menu"
+                class="rounded-lg p-2 text-2xl leading-none md:hidden">
+          {{ menuOpen() ? '✕' : '☰' }}
+        </button>
+      </div>
+    </div>
+
+    @if (menuOpen()) {
+      <nav class="flex flex-col gap-1 border-t border-slate-100 bg-white px-5 py-3 md:hidden">
+        @for (link of links; track link.id) {
+          <button type="button" (click)="scrollTo(link.id)"
+                  class="rounded-xl px-4 py-2 text-left font-semibold hover:bg-pf-blue-light">
+            {{ link.label }}
+          </button>
+        }
+        <a routerLink="/dashboard" class="mt-1 rounded-full bg-pf-blue px-5 py-2 text-center font-semibold text-white">
+          Open PathFinder →
+        </a>
+      </nav>
+    }
+  </header>
+
+  <!-- HOME -->
+  <section id="home" class="relative scroll-mt-20 overflow-hidden bg-gradient-to-b from-pf-blue-light/60 to-white">
+    <div class="pointer-events-none absolute -left-24 -top-24 size-96 rounded-full bg-pf-blue/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute -right-24 top-40 size-96 rounded-full bg-pf-green/10 blur-3xl"></div>
+
+    <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 lg:grid-cols-2 lg:py-24">
+      <div>
+        <span class="pf-fade-up inline-block rounded-full bg-pf-green-light px-4 py-1 text-sm font-semibold text-pf-green">
+          🚀 Discover your future
+        </span>
+        <h1 class="pf-fade-up mt-5 text-4xl font-extrabold leading-tight md:text-6xl" style="animation-delay: 80ms">
+          Find your path.<br />
+          <span class="bg-gradient-to-r from-pf-blue to-pf-green bg-clip-text text-transparent">Build your career.</span>
+        </h1>
+        <p class="pf-fade-up mt-5 max-w-xl text-lg text-pf-muted" style="animation-delay: 160ms">
+          PathFinder turns your skills and interests into a clear career plan: build your profile,
+          prove your level with skill tests, and discover internships that match you.
+        </p>
+
+        <div class="pf-fade-up mt-8 flex flex-wrap gap-3" style="animation-delay: 240ms">
+          <a routerLink="/profile"
+             class="rounded-full bg-pf-blue px-7 py-3 font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-pf-blue-dark">
+            Get started →
+          </a>
+          <button type="button" (click)="scrollTo('services')"
+                  class="rounded-full border-2 border-pf-blue px-7 py-3 font-semibold text-pf-blue transition hover:bg-pf-blue-light">
+            Our services
+          </button>
+        </div>
+
+        <dl class="pf-fade-up mt-10 grid max-w-md grid-cols-3 gap-4" style="animation-delay: 320ms">
+          @for (s of stats; track s.label) {
+            <div>
+              <dt class="text-3xl font-extrabold text-pf-blue">{{ s.value }}</dt>
+              <dd class="text-xs font-medium text-pf-muted">{{ s.label }}</dd>
+            </div>
+          }
+        </dl>
+      </div>
+
+      <!-- Illustration -->
+      <div class="pf-fade-up relative mx-auto w-full max-w-xl" style="animation-delay: 200ms">
+        <div class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-pf-blue-light to-sky-100 p-3 shadow-2xl ring-1 ring-white">
+          <img src="hero.png" alt="Signposts: Dream Big, Plan, Achieve" class="w-full rounded-[1.5rem] object-cover" />
+        </div>
+        <div class="pf-float absolute -left-4 top-8 rounded-2xl bg-white px-4 py-3 text-sm font-bold shadow-lg">
+          ✅ Verified skill: <span class="text-pf-green">Advanced</span>
+        </div>
+        <div class="pf-float absolute -right-3 bottom-10 rounded-2xl bg-white px-4 py-3 text-sm font-bold shadow-lg" style="animation-delay: 1.5s">
+          🎯 Internship match: <span class="text-pf-blue">92%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" class="scroll-mt-20 bg-white py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div appReveal class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-bold uppercase tracking-widest text-pf-orange">Services</p>
+        <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">Everything you need to start your career</h2>
+        <p class="mt-3 text-pf-muted">From your first profile to your first internship, in one place.</p>
+      </div>
+
+      <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        @for (s of services; track s.title; let i = $index) {
+          @if (s.link) {
+            <a [routerLink]="s.link" [appReveal]="i * 80"
+               class="group block rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-1.5 hover:shadow-xl hover:ring-pf-blue/30">
+              <div class="flex size-14 items-center justify-center rounded-2xl [&_svg]:size-7" [class]="s.color">
+                <app-icon [name]="s.icon" />
+              </div>
+              <h3 class="mt-4 text-lg font-bold">{{ s.title }}</h3>
+              <p class="mt-2 text-sm text-pf-muted">{{ s.text }}</p>
+              <p class="mt-4 text-sm font-semibold text-pf-blue">
+                Open <span class="inline-block transition group-hover:translate-x-1">→</span>
+              </p>
+            </a>
+          } @else {
+            <div [appReveal]="i * 80" class="rounded-3xl bg-slate-50 p-6 ring-1 ring-slate-100">
+              <div class="flex size-14 items-center justify-center rounded-2xl opacity-70 [&_svg]:size-7" [class]="s.color">
+                <app-icon [name]="s.icon" />
+              </div>
+              <h3 class="mt-4 text-lg font-bold">{{ s.title }}</h3>
+              <p class="mt-2 text-sm text-pf-muted">{{ s.text }}</p>
+              <span class="mt-4 inline-block rounded-full bg-white px-3 py-1 text-xs font-bold text-pf-muted ring-1 ring-slate-200">
+                Coming soon
+              </span>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="bg-pf-bg py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div appReveal class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-bold uppercase tracking-widest text-pf-blue">How it works</p>
+        <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">From profile to opportunity in 4 steps</h2>
+      </div>
+
+      <ol class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        @for (step of steps; track step.title; let i = $index) {
+          <li [appReveal]="i * 100" class="relative rounded-3xl bg-white p-6 shadow-sm">
+            <span class="flex size-11 items-center justify-center rounded-full bg-gradient-to-br from-pf-blue to-pf-green text-lg font-extrabold text-white">
+              {{ i + 1 }}
+            </span>
+            <h3 class="mt-4 font-bold">{{ step.title }}</h3>
+            <p class="mt-1 text-sm text-pf-muted">{{ step.text }}</p>
+          </li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ABOUT US -->
+  <section id="about" class="scroll-mt-20 bg-white py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div class="grid items-center gap-12 lg:grid-cols-2">
+        <div appReveal>
+          <p class="text-sm font-bold uppercase tracking-widest text-pf-green">About us</p>
+          <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">Helping students find their way</h2>
+          <p class="mt-4 text-pf-muted">
+            PathFinder is a career guidance platform built by a team of three students. Our goal is simple:
+            help every student understand what they are good at, show it with real proof, and find
+            the opportunities that fit them.
+          </p>
+          <p class="mt-3 text-pf-muted">
+            We combine your profile, your tested skills and your preferences to guide you towards internships and careers
+            that make sense for you.
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+          @for (v of values; track v.title; let i = $index) {
+            <div [appReveal]="i * 100" class="rounded-3xl bg-pf-bg p-5">
+              <p class="text-3xl">{{ v.icon }}</p>
+              <h3 class="mt-2 font-bold">{{ v.title }}</h3>
+              <p class="mt-1 text-sm text-pf-muted">{{ v.text }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <h3 appReveal class="mt-16 text-center text-xl font-bold">Meet the team</h3>
+      <div class="mx-auto mt-6 grid max-w-4xl gap-5 sm:grid-cols-3">
+        @for (member of team; track member.name; let i = $index) {
+          <div [appReveal]="i * 100" class="rounded-3xl bg-white p-6 text-center shadow-sm ring-1 ring-slate-100">
+            <div class="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br text-2xl font-bold text-white shadow-lg"
+                 [class]="member.color">
+              {{ initials(member.name) }}
+            </div>
+            <p class="mt-3 font-bold">{{ member.name }}</p>
+            <p class="text-sm text-pf-muted">{{ member.role }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="scroll-mt-20 bg-pf-bg py-20">
+    <div class="mx-auto max-w-7xl px-5">
+      <div appReveal class="mx-auto max-w-2xl text-center">
+        <p class="text-sm font-bold uppercase tracking-widest text-pf-orange">Contact</p>
+        <h2 class="mt-2 text-3xl font-extrabold md:text-4xl">Let's talk</h2>
+        <p class="mt-3 text-pf-muted">A question, an idea, a suggestion? Send us a message.</p>
+      </div>
+
+      <div class="mt-12 grid gap-8 lg:grid-cols-5">
+        <div appReveal class="space-y-4 lg:col-span-2 [&_svg]:size-5">
+          <div class="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm">
+            <div class="flex size-12 items-center justify-center rounded-xl bg-pf-blue-light text-pf-blue"><app-icon name="mail" /></div>
+            <div>
+              <p class="text-xs font-semibold uppercase text-pf-muted">Email</p>
+              <a [href]="'mailto:' + contact.email" class="font-semibold hover:text-pf-blue">{{ contact.email }}</a>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm">
+            <div class="flex size-12 items-center justify-center rounded-xl bg-pf-green-light text-pf-green"><app-icon name="phone" /></div>
+            <div>
+              <p class="text-xs font-semibold uppercase text-pf-muted">Phone</p>
+              <p class="font-semibold">{{ contact.phone }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm">
+            <div class="flex size-12 items-center justify-center rounded-xl bg-pf-orange-light text-pf-orange"><app-icon name="map" /></div>
+            <div>
+              <p class="text-xs font-semibold uppercase text-pf-muted">Location</p>
+              <p class="font-semibold">{{ contact.address }}</p>
+            </div>
+          </div>
+        </div>
+
+        <form appReveal="100" [formGroup]="form" (ngSubmit)="send()" class="space-y-4 rounded-3xl bg-white p-6 shadow-sm lg:col-span-3">
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label for="c-name" class="mb-1 block text-sm font-semibold">Your name *</label>
+              <input id="c-name" type="text" formControlName="name"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('name')" />
+              @if (hasError('name')) { <p class="mt-1 text-xs text-pf-orange">Enter your name (2 characters minimum).</p> }
+            </div>
+            <div>
+              <label for="c-email" class="mb-1 block text-sm font-semibold">Your email *</label>
+              <input id="c-email" type="email" formControlName="email"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('email')" />
+              @if (hasError('email')) { <p class="mt-1 text-xs text-pf-orange">Enter a valid email address.</p> }
+            </div>
+          </div>
+
+          <div>
+            <label for="c-subject" class="mb-1 block text-sm font-semibold">Subject *</label>
+            <input id="c-subject" type="text" formControlName="subject"
+                   class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                   [class.border-pf-orange]="hasError('subject')" />
+            @if (hasError('subject')) { <p class="mt-1 text-xs text-pf-orange">Enter a subject.</p> }
+          </div>
+
+          <div>
+            <label for="c-message" class="mb-1 block text-sm font-semibold">Message *</label>
+            <textarea id="c-message" rows="5" formControlName="message"
+                      class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                      [class.border-pf-orange]="hasError('message')"></textarea>
+            @if (hasError('message')) { <p class="mt-1 text-xs text-pf-orange">Write at least 10 characters (1000 maximum).</p> }
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <button type="submit"
+                    class="rounded-full bg-pf-blue px-7 py-2.5 font-semibold text-white shadow hover:bg-pf-blue-dark">
+              Send message
+            </button>
+            @if (sent()) {
+              <span class="text-sm font-semibold text-pf-green">✓ Your email app opened with your message. Press send there to finish.</span>
+            }
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-5 py-6">
+      <img src="logo.png" alt="PathFinder" class="h-10 w-auto" />
+      <nav class="flex flex-wrap gap-4 text-sm font-medium text-pf-muted">
+        @for (link of links; track link.id) {
+          <button type="button" (click)="scrollTo(link.id)" class="hover:text-pf-blue">{{ link.label }}</button>
+        }
+        <a routerLink="/dashboard" class="hover:text-pf-blue">App</a>
+      </nav>
+      <p class="text-xs text-pf-muted">© {{ year }} PathFinder. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
