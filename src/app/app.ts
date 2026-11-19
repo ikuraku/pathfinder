@@ -1,12 +1,11 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Sidebar } from './shared/components/sidebar/sidebar';
+import { Topbar } from './shared/components/topbar/topbar';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet, Sidebar, Topbar],
   templateUrl: './app.html',
 })
-export class App {
-  protected readonly title = signal('pathfinder');
-}
+export class App {}

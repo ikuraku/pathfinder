@@ -1,1 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+html {
+  font-size: 15px; /* au lieu de 16px : tout devient 12 % plus petit */
+}
+
+/* Palette PathFinder (logo + dashboard) */
+@theme {
+  --color-pf-blue: #1d5fd1;
+  --color-pf-blue-dark: #0f4aa8;
+  --color-pf-blue-light: #e6efff;
+  --color-pf-green: #3aa743;
+  --color-pf-green-light: #e4f5e6;
+  --color-pf-orange: #f26b38;
+  --color-pf-orange-light: #fdebe3;
+  --color-pf-yellow: #f7c948;
+  --color-pf-yellow-light: #fef6dc;
+  --color-pf-bg: #f3f6fb;
+  --color-pf-text: #1f2a44;
+  --color-pf-muted: #6b7690;
+}
+/* Animations used by the profile page */
+@keyframes pf-fade-up { from { opacity: 0; transform: translateY(14px); } }
+@keyframes pf-fade { from { opacity: 0; } }
+@keyframes pf-grow { from { width: 0; } }
+@keyframes pf-donut { from { stroke-dasharray: 0 283; } }
+@keyframes pf-pop { from { opacity: 0; transform: scale(0.95); } }
+
+.pf-fade-up { animation: pf-fade-up 0.5s ease-out both; }
+.pf-fade { animation: pf-fade 0.8s ease-out both; }
+.pf-grow { animation: pf-grow 0.9s ease-out both; }
+.pf-donut { animation: pf-donut 1s ease-out both; }
+.pf-pop { animation: pf-pop 0.2s ease-out both; }
+
+body {
+  background-color: var(--color-pf-bg);
+  color: var(--color-pf-text);
+  font-family: "Poppins", "Inter", system-ui, sans-serif;
+}/* You can add global styles to this file, and also import other style files */
