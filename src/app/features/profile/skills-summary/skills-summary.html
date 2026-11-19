@@ -1,0 +1,66 @@
+<div class="h-full rounded-3xl bg-white p-6 shadow-sm">
+  <div class="flex items-center justify-between gap-3">
+    <h2 class="flex items-center gap-2 text-lg font-bold">
+      <span class="text-pf-blue [&_svg]:size-5"><app-icon name="grid" /></span>
+      My Skills
+      <span class="rounded-full bg-pf-blue-light px-2 py-0.5 text-xs font-bold text-pf-blue">{{ skills().length }}</span>
+    </h2>
+    <a routerLink="/skills"
+       class="flex items-center gap-1.5 rounded-full bg-pf-blue px-4 py-2 text-sm font-semibold text-white shadow transition hover:-translate-y-0.5 hover:bg-pf-blue-dark hover:shadow-md [&_svg]:size-4">
+      <app-icon name="plus" /> Add skill
+    </a>
+  </div>
+
+  @if (skills().length === 0) {
+    <div class="mt-6 rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center">
+      <p class="font-semibold">No skills yet</p>
+      <p class="mt-1 text-sm text-pf-muted">Pick a skill in the catalog and take a short test to get your level.</p>
+      <a routerLink="/skills"
+         class="mt-4 inline-block rounded-full bg-pf-blue-light px-5 py-2 text-sm font-semibold text-pf-blue hover:bg-pf-blue hover:text-white">
+        + Add your first skill
+      </a>
+    </div>
+  } @else {
+    <ul class="mt-5 grid gap-x-8 gap-y-4 md:grid-cols-2">
+      @for (item of visible(); track item.skill.id) {
+        <li class="group flex items-center gap-3">
+          <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-50 ring-1 ring-slate-100">
+            <app-skill-logo [name]="item.skill.name" [logo]="item.catalog?.logo"
+                            [variant]="item.catalog?.variant" [emoji]="item.catalog?.emoji" size="sm" />
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2 text-sm">
+              <span class="truncate font-semibold">
+                {{ item.skill.name }}
+                @if (item.skill.verified) {
+                  <span class="text-pf-green" title="Verified by test">✓</span>
+                }
+              </span>
+              <span class="font-semibold text-pf-muted">{{ percent(item.skill.level) }}%</span>
+            </div>
+            <div class="mt-1.5 h-2 rounded-full bg-slate-100">
+              <div class="pf-grow h-2 rounded-full" [class]="barColor(item.skill.level)"
+                   [style.width.%]="percent(item.skill.level)"></div>
+            </div>
+          </div>
+
+          <div class="flex gap-1 md:opacity-0 md:transition md:focus-within:opacity-100 md:group-hover:opacity-100 [&_svg]:size-4">
+            <a routerLink="/skills" aria-label="Update level" title="Update level on the Skills page"
+               class="rounded-lg p-1.5 text-pf-blue hover:bg-pf-blue-light">
+              <app-icon name="pencil" />
+            </a>
+            <button type="button" (click)="remove(item.skill)" aria-label="Delete skill"
+                    class="rounded-lg p-1.5 text-pf-orange hover:bg-pf-orange-light">
+              <app-icon name="trash" />
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+
+    <a routerLink="/skills" class="mt-4 inline-block text-sm font-semibold text-pf-blue hover:underline">
+      Manage all {{ skills().length }} skills →
+    </a>
+  }
+</div>

@@ -1,0 +1,50 @@
+<div class="w-full space-y-6">
+
+  <div class="pf-fade-up">
+    <h1 class="text-3xl font-bold">Preferences &amp; Internships</h1>
+    <p class="text-sm text-pf-muted">
+      Tell us what you are looking for and discover matching opportunities.
+    </p>
+  </div>
+
+  <!-- My preferences -->
+  <section class="pf-fade-up rounded-3xl bg-white p-6 shadow-sm" style="animation-delay: 60ms">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-lg font-bold">⚙️ My preferences</h2>
+      @if (isComplete()) {
+        <button type="button" (click)="editing.set(!editing())"
+                class="rounded-full border border-pf-blue px-4 py-1.5 text-sm font-semibold text-pf-blue hover:bg-pf-blue-light">
+          {{ editing() ? 'Close' : '✎ Edit preferences' }}
+        </button>
+      }
+    </div>
+
+    @if (editing()) {
+      <div class="mt-4">
+        <app-preferences-form (preferencesSaved)="editing.set(false)" />
+      </div>
+    } @else {
+      <div class="mt-4 space-y-3">
+        <div class="flex flex-wrap items-center gap-2">
+          @for (interest of preferences().interests; track interest) {
+            <span class="rounded-full bg-pf-blue px-3 py-1 text-sm font-semibold text-white">{{ interest }}</span>
+          }
+        </div>
+        <div class="flex flex-wrap gap-2 text-sm font-semibold">
+          <span class="rounded-full bg-pf-green-light px-3 py-1 text-pf-green">
+             {{ typeLabels[preferences().workType] }}
+          </span>
+          <span class="rounded-full bg-pf-orange-light px-3 py-1 text-pf-orange">
+             {{ environmentLabels[preferences().workEnvironment] }}
+          </span>
+          <span class="rounded-full bg-pf-yellow-light px-3 py-1 text-amber-700">
+             {{ preferences().location }}
+          </span>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- Opportunities -->
+  <app-opportunity-finder />
+</div>

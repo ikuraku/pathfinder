@@ -1,0 +1,75 @@
+<div class="w-full">
+  <h1 class="text-2xl font-bold">Preferences</h1>
+  <p class="mb-4 text-sm text-pf-muted">
+    Tell us what you are interested in and how you like to work.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="space-y-5">
+
+    <!-- Interests -->
+    <div>
+      <p class="mb-2 text-sm font-semibold">Areas of interest * <span class="font-normal text-pf-muted">(pick at least one)</span></p>
+      <div class="flex flex-wrap gap-2">
+        @for (interest of availableInterests; track interest) {
+          <button type="button" (click)="toggleInterest(interest)"
+                  class="rounded-full border px-4 py-1.5 text-sm font-medium transition"
+                  [class]="isSelected(interest)
+                    ? 'border-pf-blue bg-pf-blue text-white'
+                    : 'border-slate-200 bg-white text-pf-text hover:bg-pf-blue-light'">
+            @if (isSelected(interest)) { ✓ }
+            {{ interest }}
+          </button>
+        }
+      </div>
+      @if (interestsInvalid) {
+        <p class="mt-2 text-xs text-pf-orange">Select at least one area of interest.</p>
+      }
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <!-- Work environment -->
+      <div>
+        <label for="workEnvironment" class="mb-1 block text-sm font-semibold">Work environment *</label>
+        <select id="workEnvironment" formControlName="workEnvironment"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 outline-none focus:border-pf-blue">
+          @for (e of environments; track e.value) {
+            <option [value]="e.value">{{ e.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Work type -->
+      <div>
+        <label for="workType" class="mb-1 block text-sm font-semibold">Type of work *</label>
+        <select id="workType" formControlName="workType"
+                class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 outline-none focus:border-pf-blue">
+          @for (t of workTypes; track t.value) {
+            <option [value]="t.value">{{ t.label }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div>
+      <label for="location" class="mb-1 block text-sm font-semibold">Preferred location *</label>
+      <input id="location" type="text" formControlName="location"
+             placeholder="e.g. France, Canada, Remote worldwide"
+             class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue"
+             [class.border-pf-orange]="locationInvalid" />
+      @if (locationInvalid) {
+        <p class="mt-1 text-xs text-pf-orange">Location is required (60 characters max).</p>
+      }
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button type="submit"
+              class="rounded-full bg-pf-blue px-6 py-2 font-semibold text-white shadow hover:bg-pf-blue-dark">
+        Save preferences
+      </button>
+      @if (saved()) {
+        <span class="text-sm font-semibold text-pf-green">✓ Preferences saved</span>
+      }
+    </div>
+  </form>
+</div>

@@ -1,0 +1,182 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm"
+     (click)="close()">
+  <div class="pf-pop max-h-[92vh] w-full max-w-xl overflow-auto rounded-3xl bg-white shadow-2xl"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4 bg-gradient-to-r from-pf-blue to-sky-500 p-5 text-white">
+      <div class="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white shadow">
+        <app-skill-logo [name]="skill().name" [logo]="skill().logo" [variant]="skill().variant"
+                        [emoji]="skill().emoji" size="lg" />
+      </div>
+      <div class="flex-1">
+        <p class="text-xs font-semibold uppercase tracking-wide text-white/80">Skill</p>
+        <h3 class="text-xl font-bold leading-tight">{{ skill().name }}</h3>
+      </div>
+      <button type="button" (click)="close()" aria-label="Close"
+              class="rounded-full p-2 text-xl leading-none hover:bg-white/20">✕</button>
+    </div>
+
+    <div class="p-6">
+
+      <!-- INTRO -->
+      @if (view() === 'intro') {
+        <h4 class="text-lg font-bold">Test your {{ skill().name }} level</h4>
+        <ul class="mt-3 space-y-2 text-sm text-pf-muted">
+          <li>📝 {{ quizLength() }} multiple-choice questions, from easy to hard</li>
+          <li>🎯 Harder questions are worth more points</li>
+          <li>🏅 Your score sets your level: Beginner, Intermediate, Advanced or Expert</li>
+        </ul>
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <button type="button" (click)="start()"
+                  class="rounded-full bg-pf-blue px-6 py-2.5 font-semibold text-white shadow hover:bg-pf-blue-dark">
+            Start the test
+          </button>
+          <button type="button" (click)="chooseManually()"
+                  class="text-sm font-semibold text-pf-blue hover:underline">
+            Skip: choose my level myself
+          </button>
+        </div>
+      }
+
+      <!-- QUIZ -->
+      @if (view() === 'quiz' && question(); as q) {
+        <div class="flex items-center justify-between text-sm">
+          <span class="font-semibold">Question {{ current() + 1 }} of {{ questions().length }}</span>
+          <span class="rounded-full px-3 py-0.5 text-xs font-bold"
+                [class]="q.difficulty === 1 ? 'bg-pf-green-light text-pf-green'
+                       : q.difficulty === 2 ? 'bg-pf-yellow-light text-amber-700'
+                       : 'bg-pf-orange-light text-pf-orange'">
+            {{ difficultyLabels[q.difficulty] }} · {{ q.difficulty }} pt{{ q.difficulty > 1 ? 's' : '' }}
+          </span>
+        </div>
+        <div class="mt-2 h-2 rounded-full bg-slate-100">
+          <div class="h-2 rounded-full bg-pf-blue transition-all duration-500" [style.width.%]="progress()"></div>
+        </div>
+
+        <h4 class="mt-5 text-lg font-bold leading-snug">{{ q.question }}</h4>
+
+        <div class="mt-4 space-y-2.5">
+          @for (option of q.options; track $index) {
+            <button type="button" (click)="choose($index)"
+                    class="flex w-full items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left text-sm font-medium transition"
+                    [class]="answers()[current()] === $index
+                      ? 'border-pf-blue bg-pf-blue-light'
+                      : 'border-slate-200 hover:border-pf-blue/50 hover:bg-slate-50'">
+              <span class="flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                    [class]="answers()[current()] === $index ? 'bg-pf-blue text-white' : 'bg-slate-100 text-pf-muted'">
+                {{ letters[$index] }}
+              </span>
+              <span>{{ option.text }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="mt-6 flex justify-end">
+          <button type="button" (click)="next()" [disabled]="!hasAnswered()"
+                  class="rounded-full bg-pf-blue px-6 py-2.5 font-semibold text-white shadow hover:bg-pf-blue-dark disabled:cursor-not-allowed disabled:opacity-40">
+            {{ isLast() ? 'Finish' : 'Next →' }}
+          </button>
+        </div>
+      }
+
+      <!-- MANUAL LEVEL -->
+      @if (view() === 'manual') {
+        <h4 class="text-lg font-bold">Choose your level</h4>
+        @if (!hasQuiz()) {
+          <p class="mt-1 text-sm text-pf-muted">
+            There is no test for this skill yet, so you set the level yourself. It will be marked as self-declared.
+          </p>
+        } @else {
+          <p class="mt-1 text-sm text-pf-muted">
+            Self-declared levels are not verified. Take the test to get a verified badge.
+          </p>
+        }
+
+        <div class="mt-4 grid gap-2.5 sm:grid-cols-2">
+          @for (l of levels; track l.value) {
+            <button type="button" (click)="manualLevel.set(l.value)"
+                    class="rounded-2xl border-2 p-3 text-left transition"
+                    [class]="manualLevel() === l.value
+                      ? 'border-pf-blue bg-pf-blue-light'
+                      : 'border-slate-200 hover:border-pf-blue/50 hover:bg-slate-50'">
+              <p class="font-bold">{{ l.label }}</p>
+              <p class="text-xs text-pf-muted">{{ l.hint }}</p>
+              <div class="mt-2 flex gap-1">
+                @for (n of [1, 2, 3, 4]; track n) {
+                  <div class="h-1.5 flex-1 rounded-full"
+                       [class]="n <= l.value ? 'bg-pf-green' : 'bg-slate-200'"></div>
+                }
+              </div>
+            </button>
+          }
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <button type="button" (click)="saveManual()"
+                  class="rounded-full bg-pf-blue px-6 py-2.5 font-semibold text-white shadow hover:bg-pf-blue-dark">
+            Save level
+          </button>
+          @if (hasQuiz()) {
+            <button type="button" (click)="backToIntro()"
+                    class="text-sm font-semibold text-pf-blue hover:underline">
+              ← Take the test instead
+            </button>
+          }
+        </div>
+      }
+
+      <!-- RESULT -->
+      @if (view() === 'result') {
+        <div class="rounded-2xl bg-gradient-to-br from-pf-blue-light to-pf-green-light p-6 text-center">
+          <p class="text-sm font-semibold text-pf-muted">Your level in {{ skill().name }}</p>
+          <p class="mt-1 text-3xl font-bold text-pf-blue">{{ levelLabel(resultLevel()) }}</p>
+          <div class="mx-auto mt-3 flex max-w-xs gap-1.5">
+            @for (n of [1, 2, 3, 4]; track n) {
+              <div class="pf-grow h-2.5 flex-1 rounded-full"
+                   [class]="n <= resultLevel() ? 'bg-pf-green' : 'bg-white'"></div>
+            }
+          </div>
+          <p class="mt-3 text-sm">
+            <b>{{ correctCount() }}/{{ questions().length }}</b> correct answers ·
+            <b>{{ points() }}/{{ maxPoints() }}</b> points · <b>{{ percent() }}%</b>
+          </p>
+        </div>
+
+        <h5 class="mt-5 text-sm font-bold uppercase tracking-wide text-pf-muted">Review</h5>
+        <ul class="mt-2 space-y-2">
+          @for (q of questions(); track $index) {
+            <li class="rounded-xl border border-slate-200 p-3 text-sm">
+              <div class="flex gap-2">
+                <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                      [class]="isCorrect($index) ? 'bg-pf-green' : 'bg-pf-orange'">
+                  {{ isCorrect($index) ? '✓' : '✗' }}
+                </span>
+                <div class="min-w-0">
+                  <p class="font-semibold">{{ q.question }}</p>
+                  @if (isCorrect($index)) {
+                    <p class="text-pf-green">{{ chosenText($index) }}</p>
+                  } @else {
+                    <p class="text-pf-orange line-through">{{ chosenText($index) }}</p>
+                    <p class="text-pf-green">Correct answer: {{ correctText($index) }}</p>
+                  }
+                </div>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <button type="button" (click)="saveResult()"
+                  class="rounded-full bg-pf-blue px-6 py-2.5 font-semibold text-white shadow hover:bg-pf-blue-dark">
+            Save to my skills
+          </button>
+          <button type="button" (click)="start()"
+                  class="rounded-full border border-slate-300 px-6 py-2.5 font-semibold text-pf-muted hover:bg-slate-50">
+            Retry the test
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

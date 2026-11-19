@@ -1,0 +1,35 @@
+<aside class="flex h-screen w-56 shrink-0 flex-col border-r border-slate-200 bg-white p-3">
+  <img src="logo.png" alt="PathFinder" class="mx-auto mb-4 w-36" />
+
+  <nav class="flex flex-col gap-0.5">
+    @for (item of menu; track item.label) {
+      @if (item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-pf-blue! text-white! shadow"
+          class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-pf-text transition hover:bg-pf-blue-light [&_svg]:size-5"
+        >
+          <app-icon [name]="item.icon" />
+          {{ item.label }}
+        </a>
+      } @else {
+        <span
+          class="flex cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-pf-muted opacity-60 [&_svg]:size-5"
+          title="Module développé par un autre membre"
+        >
+          <app-icon [name]="item.icon" />
+          {{ item.label }}
+        </span>
+      }
+    }
+  </nav>
+
+  <div class="mt-auto flex flex-col gap-0.5 border-t border-slate-200 pt-3">
+    @for (item of bottomMenu; track item.label) {
+      <span class="flex items-center gap-3 rounded-xl px-3 py-1.5 text-sm text-pf-muted [&_svg]:size-5">
+        <app-icon [name]="item.icon" />
+        {{ item.label }}
+      </span>
+    }
+  </div>
+</aside>

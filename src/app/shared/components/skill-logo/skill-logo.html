@@ -1,0 +1,8 @@
+@if (emoji(); as emoji) {
+  <span [class]="sizes().text + ' leading-none'">{{ emoji }}</span>
+} @else if (logo() && !failed()) {
+  <img [src]="url()" [alt]="name()" [class]="sizes().img + ' object-contain'"
+       (error)="failed.set(true)" />
+} @else {
+  <span [class]="sizes().text + ' font-bold text-pf-blue'">{{ name().charAt(0).toUpperCase() }}</span>
+}

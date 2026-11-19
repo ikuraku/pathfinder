@@ -1,0 +1,221 @@
+<div class="w-full">
+  @if (showForm()) {
+    <h1 class="text-2xl font-bold">My Profile</h1>
+    <p class="mb-4 text-sm text-pf-muted">
+      Your information is used to find the careers that match you best.
+    </p>
+  }
+  @if (saved()) {
+    <p class="mb-3 rounded-xl bg-pf-green-light px-4 py-2 text-sm font-semibold text-pf-green">
+      ✓ Profile saved
+    </p>
+  }
+
+  @if (showForm()) {
+    <form [formGroup]="form" (ngSubmit)="save()" class="overflow-visible rounded-3xl bg-white shadow-sm">
+
+      <div class="rounded-t-3xl bg-gradient-to-r from-pf-blue to-sky-500 px-6 py-4 text-white">
+        <h2 class="text-lg font-bold">{{ profile() ? 'Edit your profile' : 'Create your profile' }}</h2>
+        <p class="text-sm text-white/80">Fields marked with * are required.</p>
+      </div>
+
+      <div class="grid gap-8 p-6 xl:grid-cols-2">
+
+        <!-- Personal information -->
+        <section>
+          <h3 class="mb-3 text-sm font-bold uppercase tracking-wide text-pf-blue">Personal information</h3>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="fullName" class="mb-1 block text-sm font-semibold">Full name *</label>
+              <input id="fullName" type="text" formControlName="fullName"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('fullName')" />
+              @if (hasError('fullName', 'required')) {
+                <p class="mt-1 text-xs text-pf-orange">Full name is required.</p>
+              }
+              @if (hasError('fullName', 'minlength')) {
+                <p class="mt-1 text-xs text-pf-orange">At least 3 characters.</p>
+              }
+            </div>
+
+            <div>
+              <label for="email" class="mb-1 block text-sm font-semibold">Email *</label>
+              <input id="email" type="email" formControlName="email"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('email')" />
+              @if (hasError('email', 'required')) {
+                <p class="mt-1 text-xs text-pf-orange">Email is required.</p>
+              }
+              @if (hasError('email', 'email')) {
+                <p class="mt-1 text-xs text-pf-orange">Invalid email format.</p>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Education -->
+        <section>
+          <h3 class="mb-3 text-sm font-bold uppercase tracking-wide text-pf-green">Education</h3>
+          <div class="grid gap-4 md:grid-cols-2">
+
+            <!-- University: custom dropdown that opens below the field -->
+            <div class="relative md:col-span-2">
+              <label for="university" class="mb-1 block text-sm font-semibold">University / School *</label>
+              <div class="relative">
+                <input id="university" type="text" formControlName="university" autocomplete="off"
+                       placeholder="Select from the list or type your own"
+                       (focus)="openUniversity()"
+                       (input)="onUniversityInput($event)"
+                       (blur)="closeUniversity()"
+                       (keydown.escape)="closeUniversity()"
+                       class="w-full rounded-xl border border-slate-200 px-4 py-2 pr-10 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                       [class.border-pf-orange]="hasError('university')" />
+                <span class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-pf-muted">▾</span>
+              </div>
+
+              @if (universityOpen()) {
+                <ul class="absolute left-0 right-0 top-full z-30 mt-1 max-h-60 overflow-auto rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+                  @for (u of filteredUniversities(); track u) {
+                    <li>
+                      <button type="button"
+                              (mousedown)="$event.preventDefault(); selectUniversity(u)"
+                              class="block w-full px-4 py-2 text-left text-sm hover:bg-pf-blue-light">
+                        {{ u }}
+                      </button>
+                    </li>
+                  } @empty {
+                    <li class="px-4 py-2 text-sm text-pf-muted">
+                      No match: your text will be used as the university name.
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (hasError('university', 'required')) {
+                <p class="mt-1 text-xs text-pf-orange">University is required.</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label for="studyField" class="mb-1 block text-sm font-semibold">Field of study *</label>
+              <input id="studyField" type="text" formControlName="studyField"
+                     placeholder="e.g. Software Engineering"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('studyField')" />
+              @if (hasError('studyField', 'required')) {
+                <p class="mt-1 text-xs text-pf-orange">Field of study is required.</p>
+              }
+            </div>
+
+            <div>
+              <label for="studyLevel" class="mb-1 block text-sm font-semibold">Education level *</label>
+              <select id="studyLevel" formControlName="studyLevel"
+                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20">
+                @for (l of studyLevels; track l.value) {
+                  <option [value]="l.value">{{ l.label }}</option>
+                }
+              </select>
+            </div>
+
+            <div>
+              <label for="studyYear" class="mb-1 block text-sm font-semibold">Current year *</label>
+              <select id="studyYear" formControlName="studyYear"
+                      class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20">
+                @for (y of studyYears; track y.value) {
+                  <option [ngValue]="y.value">{{ y.label }}</option>
+                }
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact & links -->
+        <section>
+          <h3 class="mb-3 text-sm font-bold uppercase tracking-wide text-pf-orange">
+            Contact &amp; links <span class="font-normal normal-case text-pf-muted">(optional)</span>
+          </h3>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="phone" class="mb-1 block text-sm font-semibold">Phone number</label>
+              <input id="phone" type="tel" formControlName="phone" placeholder="+216 12 345 678"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('phone')" />
+              @if (hasError('phone', 'pattern')) {
+                <p class="mt-1 text-xs text-pf-orange">Enter 8 to 15 digits, optionally starting with +.</p>
+              }
+            </div>
+
+            <div>
+              <label for="linkedin" class="mb-1 block text-sm font-semibold">LinkedIn</label>
+              <input id="linkedin" type="text" formControlName="linkedin"
+                     placeholder="linkedin.com/in/your-name"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('linkedin')" />
+              @if (hasError('linkedin', 'pattern')) {
+                <p class="mt-1 text-xs text-pf-orange">Enter a valid LinkedIn profile link.</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label for="github" class="mb-1 block text-sm font-semibold">GitHub</label>
+              <input id="github" type="text" formControlName="github"
+                     placeholder="github.com/your-username"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('github')" />
+              @if (hasError('github', 'pattern')) {
+                <p class="mt-1 text-xs text-pf-orange">Enter a valid GitHub profile link.</p>
+              }
+            </div>
+          </div>
+        </section>
+
+        <!-- Career -->
+        <section>
+          <h3 class="mb-3 text-sm font-bold uppercase tracking-wide text-pf-blue">Career</h3>
+          <div class="grid gap-4 md:grid-cols-2">
+            <div>
+              <label for="experienceYears" class="mb-1 block text-sm font-semibold">Years of experience</label>
+              <input id="experienceYears" type="number" formControlName="experienceYears"
+                     class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                     [class.border-pf-orange]="hasError('experienceYears')" />
+              @if (hasError('experienceYears')) {
+                <p class="mt-1 text-xs text-pf-orange">Between 0 and 40 years.</p>
+              }
+            </div>
+
+            <div class="md:col-span-2">
+              <label for="goal" class="mb-1 block text-sm font-semibold">Career goal *</label>
+              <textarea id="goal" rows="3" formControlName="goal"
+                        placeholder="e.g. Become a Cloud Engineer"
+                        class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+                        [class.border-pf-orange]="hasError('goal')"></textarea>
+              @if (hasError('goal', 'required')) {
+                <p class="mt-1 text-xs text-pf-orange">Career goal is required.</p>
+              }
+              @if (hasError('goal', 'maxlength')) {
+                <p class="mt-1 text-xs text-pf-orange">Maximum 120 characters.</p>
+              }
+            </div>
+          </div>
+        </section>
+
+        <div class="flex items-center gap-3 border-t border-slate-100 pt-4 xl:col-span-2">
+          <button type="submit"
+                  class="rounded-full bg-pf-blue px-6 py-2 font-semibold text-white shadow hover:bg-pf-blue-dark">
+            Save
+          </button>
+          @if (profile()) {
+            <button type="button" (click)="cancelEdit()"
+                    class="rounded-full border border-slate-300 px-6 py-2 font-semibold text-pf-muted hover:bg-slate-50">
+              Cancel
+            </button>
+          }
+        </div>
+      </div>
+    </form>
+  } @else {
+    @if (profile(); as p) {
+      <app-profile-overview [profile]="p" (edit)="startEdit()" (photoChange)="updatePhoto($event)" />
+    }
+  }
+</div>

@@ -1,0 +1,27 @@
+<div class="space-y-5">
+
+  <!-- Header -->
+  <div class="pf-fade-up flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-bold">My Profile</h1>
+      <p class="text-sm text-pf-muted">Manage your information, skills and preferences.</p>
+    </div>
+    <button type="button" (click)="edit.emit()"
+            class="flex items-center gap-2 rounded-full bg-pf-blue px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-pf-blue-dark hover:shadow-lg [&_svg]:size-4">
+      <app-icon name="pencil" />
+      Edit profile
+    </button>
+  </div>
+
+  <div class="grid gap-5 xl:grid-cols-3">
+    <app-profile-card class="pf-fade-up xl:col-span-2"
+                      [profile]="profile()" (photoChange)="photoChange.emit($event)" />
+
+    <app-profile-completeness class="pf-fade-up" style="animation-delay: 100ms"
+                              [percent]="percent()" [items]="items()" />
+
+    <app-skills-summary class="pf-fade-up xl:col-span-2" style="animation-delay: 200ms" />
+
+    <app-skill-radar class="pf-fade-up" style="animation-delay: 300ms" [skills]="skills()" />
+  </div>
+</div>

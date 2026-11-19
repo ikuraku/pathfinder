@@ -1,0 +1,26 @@
+<header class="flex items-center justify-between gap-4 px-6 py-4">
+  <div class="flex w-full max-w-xl items-center gap-3 rounded-full border border-slate-200 bg-white px-5 py-3 shadow-sm">
+    <span class="text-pf-muted"><app-icon name="search" /></span>
+    <input
+      type="text"
+      placeholder="Search for careers, skills..."
+      class="w-full bg-transparent text-sm outline-none"
+    />
+  </div>
+
+  <div class="flex items-center gap-5">
+    <button class="relative text-pf-text" aria-label="Notifications">
+      <app-icon name="bell" />
+      <span class="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-pf-orange"></span>
+    </button>
+
+    @if (photo(); as photo) {
+      <img [src]="photo" alt="" class="size-10 rounded-full object-cover" />
+    } @else {
+      <div class="flex h-10 w-10 items-center justify-center rounded-full bg-pf-blue font-semibold text-white">
+        {{ userName().charAt(0) }}
+      </div>
+    }
+      <span class="font-medium">{{ userName() }}</span>
+    </div>
+</header>

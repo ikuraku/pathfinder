@@ -1,0 +1,114 @@
+<div class="relative h-full overflow-hidden rounded-3xl bg-white p-6 shadow-sm">
+  <div class="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full bg-pf-blue-light"></div>
+  <div class="pointer-events-none absolute right-24 top-16 size-16 rounded-full bg-pf-yellow-light"></div>
+
+  <div class="relative flex flex-wrap items-center gap-6">
+
+    <!-- Photo -->
+    <div class="relative shrink-0">
+      @if (profile().photo; as photo) {
+        <img [src]="photo" alt="Profile photo"
+             class="size-32 rounded-3xl object-cover shadow-lg ring-4 ring-pf-green/30" />
+      } @else {
+        <div class="flex size-32 items-center justify-center rounded-3xl bg-gradient-to-br from-pf-blue to-pf-green text-5xl font-bold text-white shadow-lg ring-4 ring-pf-green/30">
+          {{ initials() }}
+        </div>
+      }
+
+      <button type="button" (click)="toggleMenu()" aria-label="Change profile photo"
+              class="absolute -bottom-2 -right-2 flex size-9 items-center justify-center rounded-full border-2 border-white bg-pf-blue text-white shadow transition hover:scale-110 hover:bg-pf-blue-dark [&_svg]:size-4">
+        <app-icon name="camera" />
+      </button>
+
+      @if (menuOpen()) {
+        <button type="button" aria-label="Close menu" (click)="closeMenu()"
+                class="fixed inset-0 z-20 cursor-default"></button>
+        <div class="pf-pop absolute left-0 top-full z-30 mt-3 w-48 rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+          <button type="button" (click)="chooseFile(fileInput)"
+                  class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm font-medium hover:bg-pf-blue-light [&_svg]:size-4">
+            <span class="text-pf-blue"><app-icon name="camera" /></span>
+            {{ profile().photo ? 'Change photo' : 'Upload photo' }}
+          </button>
+          @if (profile().photo) {
+            <button type="button" (click)="removePhoto()"
+                    class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm font-medium text-pf-orange hover:bg-pf-orange-light [&_svg]:size-4">
+              <app-icon name="trash" />
+              Remove photo
+            </button>
+          }
+        </div>
+      }
+
+      <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+    </div>
+
+    <!-- Identity -->
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-tight">{{ profile().fullName }}</h2>
+      <p class="text-sm font-semibold text-pf-blue">{{ levelLabel() }} · {{ yearLabel() }}</p>
+
+      <ul class="mt-3 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2 [&_svg]:size-4 [&_svg]:shrink-0">
+        <li class="flex items-center gap-2">
+          <span class="text-pf-blue"><app-icon name="cap" /></span>
+          <span class="truncate" [title]="universityLabel()">{{ universityLabel() }}</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="text-pf-green"><app-icon name="grid" /></span>
+          <span class="truncate">{{ profile().studyField }}</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="text-pf-orange"><app-icon name="user" /></span>
+          <span class="truncate">{{ experienceLabel() }}</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="text-pf-blue"><app-icon name="mail" /></span>
+          <span class="truncate">{{ profile().email }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  @if (photoError()) {
+    <p class="relative mt-3 rounded-xl bg-pf-orange-light px-4 py-2 text-sm font-semibold text-pf-orange">
+      {{ photoError() }}
+    </p>
+  }
+
+  <!-- Contact & links (only the ones that were filled in) -->
+  @if (phoneLabel() || linkedinUrl() || githubUrl()) {
+    <div class="relative mt-4 flex flex-wrap gap-2">
+      @if (phoneLabel(); as phone) {
+        <a [href]="'tel:' + phone"
+           class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium transition hover:-translate-y-0.5 hover:bg-pf-blue-light [&_svg]:size-4">
+          <span class="text-pf-green"><app-icon name="phone" /></span>
+          {{ phone }}
+        </a>
+      }
+      @if (linkedinUrl(); as url) {
+        <a [href]="url" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium transition hover:-translate-y-0.5 hover:bg-pf-blue-light [&_svg]:size-4">
+          <span class="text-pf-blue"><app-icon name="linkedin" /></span>
+          LinkedIn
+        </a>
+      }
+      @if (githubUrl(); as url) {
+        <a [href]="url" target="_blank" rel="noopener noreferrer"
+           class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium transition hover:-translate-y-0.5 hover:bg-pf-blue-light [&_svg]:size-4">
+          <span class="text-pf-text"><app-icon name="github" /></span>
+          GitHub
+        </a>
+      }
+    </div>
+  }
+
+  <!-- Career goal -->
+  <div class="relative mt-5 flex items-center gap-4 rounded-2xl bg-gradient-to-r from-pf-blue to-sky-500 p-4 text-white">
+    <div class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-white/20 [&_svg]:size-6">
+      <app-icon name="target" />
+    </div>
+    <div>
+      <p class="text-[11px] font-semibold uppercase tracking-wide text-white/80">Career goal</p>
+      <p class="text-lg font-bold leading-snug">{{ profile().goal }}</p>
+    </div>
+  </div>
+</div>

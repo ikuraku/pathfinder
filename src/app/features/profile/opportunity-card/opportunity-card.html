@@ -1,0 +1,73 @@
+<article class="flex h-full flex-col rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-0.5 hover:shadow-md">
+  <div class="flex items-start gap-3">
+    <div class="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-50 ring-1 ring-slate-100">
+      @if (job().logo && !logoFailed()) {
+        <img [src]="job().logo" alt="" class="size-full object-contain" (error)="logoFailed.set(true)" />
+      } @else {
+        <span class="text-lg font-bold text-pf-blue">{{ job().company.charAt(0).toUpperCase() }}</span>
+      }
+    </div>
+
+    <div class="min-w-0 flex-1">
+      <h3 class="font-bold leading-snug">{{ job().title }}</h3>
+      <p class="truncate text-sm text-pf-muted">{{ job().company }} · {{ job().location }}</p>
+    </div>
+
+    <button type="button" (click)="toggleSave.emit()"
+            [attr.aria-label]="saved() ? 'Remove from saved' : 'Save offer'"
+            class="rounded-full p-1.5 text-xl leading-none transition hover:bg-pf-yellow-light"
+            [class]="saved() ? 'text-amber-500' : 'text-slate-300'">
+      {{ saved() ? '★' : '☆' }}
+    </button>
+  </div>
+
+  <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+    @if (job().type === 'internship') {
+      <span class="rounded-full bg-pf-green-light px-2.5 py-0.5 text-pf-green">Internship</span>
+    } @else if (job().type !== 'other') {
+      <span class="rounded-full bg-pf-blue-light px-2.5 py-0.5 text-pf-blue">{{ job().type }}</span>
+    }
+    @if (job().remote) {
+      <span class="rounded-full bg-pf-orange-light px-2.5 py-0.5 text-pf-orange">Remote</span>
+    }
+    @if (match(); as m) {
+      <span class="rounded-full px-2.5 py-0.5" [class]="matchStyle()">Match {{ m.score }}%</span>
+    }
+    @if (isDemo()) {
+      <span class="rounded-full bg-slate-100 px-2.5 py-0.5 text-pf-muted">Demo</span>
+    }
+  </div>
+
+  @if (match(); as m) {
+    @if (m.matched.length) {
+      <p class="mt-2 text-xs text-pf-muted">
+        Matches your skills: <b class="text-pf-text">{{ m.matched.join(', ') }}</b>
+      </p>
+    }
+  }
+
+  <p class="mt-3 line-clamp-3 text-sm text-pf-muted">{{ job().summary }}</p>
+
+  @if (job().tags.length) {
+    <div class="mt-3 flex flex-wrap gap-1.5">
+      @for (tag of job().tags; track tag) {
+        <span class="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-pf-text">{{ tag }}</span>
+      }
+    </div>
+  }
+
+  <div class="mt-auto flex items-center justify-between gap-3 pt-4">
+    <span class="text-xs text-pf-muted">{{ postedLabel() }} · {{ job().source }}</span>
+    @if (isDemo()) {
+      <a [href]="similarUrl()" target="_blank" rel="noopener noreferrer"
+         class="rounded-full border border-pf-blue px-4 py-1.5 text-sm font-semibold text-pf-blue hover:bg-pf-blue-light">
+        Find similar ↗
+      </a>
+    } @else if (job().url) {
+      <a [href]="job().url" target="_blank" rel="noopener noreferrer"
+         class="rounded-full bg-pf-blue px-4 py-1.5 text-sm font-semibold text-white shadow hover:bg-pf-blue-dark">
+        View offer ↗
+      </a>
+    }
+  </div>
+</article>

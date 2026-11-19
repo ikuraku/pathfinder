@@ -1,0 +1,150 @@
+<div class="w-full space-y-8">
+
+  <div class="pf-fade-up">
+    <h1 class="text-3xl font-bold">Skills</h1>
+    <p class="text-sm text-pf-muted">
+      Pick a skill and take a short test: your score sets your level.
+    </p>
+  </div>
+
+  <!-- MY SKILLS -->
+  <section class="pf-fade-up">
+    <h2 class="mb-3 flex items-center gap-2 text-lg font-bold">
+      My skills
+      <span class="rounded-full bg-pf-blue-light px-2 py-0.5 text-xs font-bold text-pf-blue">{{ skills().length }}</span>
+    </h2>
+
+    @if (mySkills().length === 0) {
+      <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-8 text-center">
+        <p class="font-semibold">You have not added any skill yet</p>
+        <p class="mt-1 text-sm text-pf-muted">Choose one in the catalog below to take its test.</p>
+      </div>
+    } @else {
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        @for (item of mySkills(); track item.skill.id) {
+          <div class="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-slate-50 ring-1 ring-slate-100">
+                <app-skill-logo [name]="item.skill.name" [logo]="item.catalog?.logo"
+                                [variant]="item.catalog?.variant" [emoji]="item.catalog?.emoji" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <p class="truncate font-bold">{{ item.skill.name }}</p>
+                @if (item.skill.verified) {
+                  <p class="text-xs font-semibold text-pf-green">✓ Verified by test · {{ item.skill.score }}%</p>
+                } @else {
+                  <p class="text-xs text-pf-muted">Self-declared</p>
+                }
+              </div>
+              <span class="rounded-full bg-pf-blue-light px-3 py-0.5 text-xs font-semibold text-pf-blue">
+                {{ levelLabels[item.skill.level] }}
+              </span>
+            </div>
+
+            <div class="mt-3 flex gap-1">
+              @for (n of [1, 2, 3, 4]; track n) {
+                <div class="pf-grow h-2 flex-1 rounded-full"
+                     [class]="n <= item.skill.level ? barColor(item.skill.level) : 'bg-slate-200'"></div>
+              }
+            </div>
+
+            <div class="mt-3 flex gap-4 text-sm font-semibold">
+              <button type="button" (click)="updateLevel(item.skill)" class="text-pf-blue hover:underline">
+                {{ item.catalog && hasQuiz(item.catalog) ? 'Retake test' : 'Update level' }}
+              </button>
+              <button type="button" (click)="remove(item.skill)" class="text-pf-orange hover:underline">Delete</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- CATALOG -->
+  <section class="pf-fade-up" style="animation-delay: 100ms">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-lg font-bold">
+        Skill catalog
+        <span class="text-sm font-normal text-pf-muted">({{ filtered().length }})</span>
+      </h2>
+      <div class="flex w-full max-w-sm items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 shadow-sm">
+        <span>🔍</span>
+        <input #search type="text" placeholder="Search a skill..." [value]="query()"
+               (input)="query.set(search.value)"
+               class="w-full bg-transparent text-sm outline-none" />
+      </div>
+    </div>
+
+    <div class="mt-3 flex flex-wrap gap-2">
+      @for (c of categories; track c.value) {
+        <button type="button" (click)="category.set(c.value)"
+                class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+                [class]="category() === c.value ? 'bg-pf-blue text-white shadow' : 'bg-white text-pf-text hover:bg-pf-blue-light'">
+          {{ c.label }}
+        </button>
+      }
+    </div>
+
+    @if (filtered().length === 0) {
+      <p class="mt-4 rounded-2xl bg-white p-6 text-center text-sm text-pf-muted shadow-sm">
+        No skill found. Add it yourself below.
+      </p>
+    } @else {
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+        @for (c of filtered(); track c.id) {
+          <button type="button" (click)="openTest(c)"
+                  class="relative flex flex-col items-center gap-2 rounded-2xl bg-white p-4 text-center shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-1 hover:shadow-md hover:ring-pf-blue/40">
+
+            @if (ownedSkill(c); as mine) {
+              <span class="absolute right-2 top-2 rounded-full bg-pf-green-light px-2 py-0.5 text-[10px] font-bold text-pf-green">
+                ✓ {{ levelLabels[mine.level] }}
+              </span>
+            }
+
+            <div class="mt-3 flex size-14 items-center justify-center rounded-2xl bg-slate-50">
+              <app-skill-logo [name]="c.name" [logo]="c.logo" [variant]="c.variant" [emoji]="c.emoji" size="lg" />
+            </div>
+            <p class="text-sm font-bold leading-tight">{{ c.name }}</p>
+            @if (hasQuiz(c)) {
+              <span class="rounded-full bg-pf-blue-light px-2 py-0.5 text-[10px] font-bold text-pf-blue">📝 Test available</span>
+            } @else {
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-pf-muted">Self-assess</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <!-- CUSTOM SKILL -->
+  <section class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
+    <h3 class="font-bold">Can't find your skill?</h3>
+    <div class="mt-3 flex flex-wrap items-start gap-3">
+      <div class="min-w-48 flex-1">
+        <input #custom type="text" placeholder="e.g. Penetration testing" [value]="customName()"
+               (input)="customName.set(custom.value)" (keydown.enter)="addCustom()"
+               class="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-pf-blue focus:ring-2 focus:ring-pf-blue/20"
+               [class.border-pf-orange]="customError()" />
+        @if (customError()) {
+          <p class="mt-1 text-xs text-pf-orange">{{ customError() }}</p>
+        }
+      </div>
+      <select #customCat [value]="customCategory()"
+              (change)="customCategory.set($any(customCat.value))"
+              class="rounded-xl border border-slate-200 bg-white px-4 py-2 outline-none focus:border-pf-blue">
+        @for (c of categories.slice(1); track c.value) {
+          <option [value]="c.value">{{ c.label }}</option>
+        }
+      </select>
+      <button type="button" (click)="addCustom()"
+              class="rounded-full bg-pf-blue px-5 py-2 font-semibold text-white shadow hover:bg-pf-blue-dark">
+        Add skill
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- Test / level window -->
+@if (selected(); as skill) {
+  <app-skill-test-dialog [skill]="skill" (completed)="onCompleted($event)" (closed)="closeDialog()" />
+}
